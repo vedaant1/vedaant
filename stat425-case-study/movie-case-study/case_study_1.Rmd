@@ -1,0 +1,1135 @@
+---
+title: "IMDb Dataset: Case Study 1"
+author: "Vedaant Agarwal, TJ Pavaritpong, Jay Lim, Jacob Razdolsky"
+date: "2023-10-09"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r cars}
+library(tidyverse)
+library(ggplot2)
+library(lmtest)
+movies = read.csv('movies.csv')
+```
+
+
+# 1) Summary Statistics
+
+```{r}
+summary(movies)
+```
+
+<br>
+We see that atleast 25% of the observations of `budget` are 0, which must signify 
+missing data because a movie with 0 `budget` does not make sense. Since it is 
+expected that `budget` will be used as a predictor, these rows should be dropped.
+<br>
+
+```{r}
+movies = filter(movies, budget > 0)
+```
+
+<br>
+Run the summary again.
+<br>
+
+```{r}
+summary(movies)
+```
+
+<br> 
+$6820 - 4638 = 2182$ rows were dropped.
+<br>
+
+# 2) Numerical Columns
+
+### 2.1) Histograms of Numerical Columns
+
+```{r}
+hist(movies$budget)
+```
+<br>
+`budget` is highly right skewed.
+<br>
+
+```{r}
+hist(movies$gross)
+```
+<br>
+`gross` is highly right skewed.
+<br>
+
+```{r}
+hist(movies$runtime)
+```
+<br>
+`runtime` is a bit right skewed.
+<br>
+
+```{r}
+hist(movies$score)
+```
+<br>
+`score` is a bit left skewed.
+<br>
+
+```{r}
+hist(movies$votes)
+```
+<br>
+`votes` is highly right skewed.
+<br>
+
+```{r}
+hist(movies$year)
+```
+<br>
+`year` is fairly uniform.
+<br>
+
+### 2.2) Scatterplots of Numerical Columns
+
+```{r}
+numeric_cols <- c(1, 6, 10, 11, 13, 15)
+pairs(movies[, numeric_cols])
+```
+<br>
+There appears to be a clear non-linear relation between `score` and `votes`. One can 
+argue about some of the other pairwise relations being non-linear, however, the most
+apparent one is that between `score` and `votes`.
+<br>
+
+### 2.3) Correlation Matrix of Numerical Columns
+
+```{r}
+numeric_cols <- c(1, 6, 10, 11, 13, 15)
+cor(movies[, numeric_cols])
+```
+
+<br>
+There does not seem to be any appreciable multicollinearity between any two sets
+of predictors (excluding `gross` which is the response) except `votes` and `gross`
+to an extent. However, it should be noted that as seen from the scatterplots, some
+of the relationships look non-linear, so linear correlation might not be the best 
+metric to evaluate their relationship.
+<br>
+
+# 3) Categorical Variables
+
+```{r}
+nrow(movies)
+```
+
+### 3.1) `company`
+
+<br>
+Look at the frequency of each level.
+<br>
+
+```{r, results = "hide"}
+movies |> count(company, sort=TRUE)
+```
+
+<br>
+Too many levels, group the levels together based on a frequency cutoff of 9 (selected
+so that the two resulting levels are fairly equally represented in the dataset).
+<br>
+
+```{r}
+movies$company = with(movies, ave(company, company, 
+             FUN = function(i) replace(i, length(i) > 9
+                                       , 'Big Company')))
+movies$company = with(movies, ave(company, company, 
+             FUN = function(i) replace(i, length(i) <= 9
+                                       , 'Small Company')))
+```
+
+<br>
+New frequency table
+<br>
+
+```{r}
+movies |> count(company, sort=TRUE)
+```
+<br>
+Side by side boxplot to visualise association with `gross`.
+<br>
+
+```{r}
+ggplot(data = movies, aes(x = company, y = gross)) + geom_boxplot()
+```
+<br>
+Both levels have a lot of high outliers, and it seems that 'Big Company' has a higher
+value of the 1st and 3rd quartile (more of 'Big Company' movies have a higher `gross` value).
+<br>
+
+### 3.2) `country`
+
+```{r, results = "hide"}
+movies |> count(country, sort=TRUE)
+```
+
+<br>
+USA is highly represented, but the other countries are not, so group them together.
+<br>
+
+```{r}
+movies$country = with(movies, ave(movies$country, movies$country, 
+                FUN = function(i) replace(i, length(i) < 1000, 'Other')))
+```
+
+```{r}
+movies |> count(country, sort=TRUE)
+```
+
+```{r}
+ggplot(data = movies, aes(x = country, y = gross)) + geom_boxplot()
+```
+<br>
+Both levels have a lot of high outliers, and it seems that 'USA' has a higher value
+of the 1st and 3rd quartile (more of 'USA' movies have a higher `gross` value).
+<br>
+
+### 3.3) `director`
+
+```{r, results = "hide"}
+movies |> count(director, sort=TRUE)
+```
+
+```{r}
+movies$director = with(movies, ave(movies$director, movies$director, 
+                        FUN = function(i) replace(i, length(i) > 3,
+                                                  'More Than 3 Movies Directed')))
+
+movies$director = with(movies, ave(movies$director, movies$director, 
+                        FUN = function(i) replace(i, length(i) <= 3,
+                                                  '3 or Less Movies Directed')))
+```
+
+```{r}
+movies |> count(director, sort=TRUE)
+```
+
+```{r}
+ggplot(data = movies, aes(x = director, y = gross)) + geom_boxplot()
+```
+<br>
+Both levels have a lot of high outliers, and it seems that 'More Than 3 Movies Directed' has a higher value of the 1st and 3rd quartile (more of movies which have a director that has 'More Than 3 Movies Directed' have a higher `gross` value).
+<br>
+
+### 3.4) `genre`
+
+```{r, results = "hide"}
+movies |> count(genre, sort=TRUE)
+```
+
+```{r}
+movies$genre = with(movies, ave(movies$genre, movies$genre, 
+                      FUN = function(i) replace(i, length(i) < 357, 'Other')))
+```
+
+```{r}
+movies |> count(genre, sort=TRUE)
+```
+
+```{r}
+ggplot(data = movies, aes(x = genre, y = gross)) + geom_boxplot()
+```
+<br>
+All levels have a lot of high outliers, and it seems that 'Action' has a higher value
+of the 1st and 3rd quartile (more of 'Action' movies have a higher `gross` value).
+<br>
+
+### 3.5) `rating` 
+
+```{r, results = "hide"}
+movies |> count(rating, sort=TRUE)
+```
+
+```{r}
+movies$rating = with(movies, ave(movies$rating, movies$rating, 
+                      FUN = function(i) replace(i, length(i) < 660, 'Other')))
+```
+
+```{r}
+movies |> count(rating, sort=TRUE)
+```
+
+```{r}
+ggplot(data = movies, aes(x = rating, y = gross)) + geom_boxplot()
+```
+<br>
+All levels have a lot of high outliers, and it seems that 'Other' has a higher value
+of the 1st and 3rd quartile (more of 'Other' movies have a higher `gross` value).
+<br>
+
+### 3.6) `star`
+
+```{r, results = "hide"}
+movies |> count(star, sort=TRUE)
+```
+
+```{r}
+movies$star = with(movies, ave(movies$star, movies$star, 
+                          FUN = function(i) replace(i, length(i) > 9,
+                                        'More than 9 Movies Acted In')))
+movies$star = with(movies, ave(movies$star, movies$star, 
+                  FUN = function(i) replace(i, length(i) <= 9 & length(i) > 1,
+                          'Between 1 and 9 Movies Acted In')))
+movies$star = with(movies, ave(movies$star, movies$star, 
+                      FUN = function(i) replace(i, length(i) == 1,
+                              'One Movie Acted In')))
+```
+
+```{r}
+movies |> count(star, sort=TRUE)
+```
+
+```{r}
+ggplot(data = movies, aes(x = star, y = gross)) + geom_boxplot()
+```
+<br>
+All levels have a lot of high outliers, and it seems that 'More than 9 Movies Acted In' has a higher value of the 1st and 3rd quartile (more of movies which have a star that has 'More than 9 Movies Acted In' have a higher `gross` value).
+<br>
+
+### 3.7) `writer`
+
+```{r, results = "hide"}
+movies |> count(writer, sort=TRUE)
+```
+
+```{r}
+movies$writer = with(movies, ave(writer, writer, 
+             FUN = function(i) replace(i, length(i) >= 2
+                                       , '2 or More Movies Written')))
+
+movies$writer = with(movies, ave(writer, writer, 
+             FUN = function(i) replace(i, length(i) == 1
+                                       , '1 Movie Written')))
+```
+
+```{r}
+movies |> count(writer, sort=TRUE)
+```
+
+```{r}
+ggplot(data = movies, aes(x = writer, y = gross)) + geom_boxplot()
+```
+<br>
+All levels have a lot of high outliers, and it seems that '2 or More Movies Written' has a higher value of the 1st and 3rd quartile (more of movies which have a writer that has '2 or More Movies Written' have a higher `gross` value).
+<br>
+
+### 3.8) `name`
+
+```{r, results = "hide"}
+movies |> count(name, sort=TRUE)
+```
+
+<br>
+There is no appropriate or meaningful schema which can group the levels of `name`, and 
+given the 4604 unique levels, `name` must be dropped, as otherwise each sub-model
+linear regression would have at max 2 observations, which is pointless.
+<br>
+
+### 3.9) `released`
+
+```{r, results = "hide"}
+movies |> count(released, sort=TRUE)
+```
+
+<br>
+`year` is already being used as a predictor, so the `released` date variable is a
+bit redundant, given the 1947 unique `released` dates which cannot be grouped 
+appropriately. One grouping that could have been done was grouping based on the 
+`released` month, but that has been omitted for now and `released` is dropped as
+a variable.
+<br>
+
+**General Description**: For most categorical variables in this dataset, they have
+a large amount of levels. Whenever applicable, these levels have been grouped based on counts (frequency), as the maximum frequency of most categorical variables in this dataset is much less when compared to the total number of observations. The two exceptions to this are `name` and `released`, which we dropped because of a lack of proper grouping schema and redundancy, respectively. Also note that because the original data had so many levels
+for most categorical variables, creating bar plots for the original data was not practical.
+
+# 4) Model Selection
+
+```{r}
+movies_new = select(movies, -name, -released) 
+head(movies_new)
+```
+
+### 4.1) Full Model
+
+```{r}
+movies_new.mlr = lm(gross~., data=movies_new)
+summary(movies_new.mlr)
+```
+
+### 4.2) Backwards Selection Algorithm
+
+The idea is to remove predictors one by one from the full model and test for their
+significance against the reduced model (without said predictor). The hypothesis 
+test can be written as:
+
+\[\begin{cases}
+&H_0: \beta_i=0\\
+&H_{\alpha}: \beta_i \neq 0
+\end{cases}\]
+
+for the particular $i$th predictor. Since most of the predictors are categorical 
+variables, $F$-test results will be used by examining the anova outputs. $\alpha = 0.05$ is
+chosen as the significance level.
+
+### 4.3) First Iteration
+
+#### 4.3.1) Test for `budget`
+
+```{r}
+movies_new.no_budget = lm(gross ~ . -budget, data=movies_new)
+anova(movies_new.no_budget, movies_new.mlr)
+```
+
+<br>
+$p$-value is lower than $\alpha$ so reject the null and keep `budget` right now. 
+Which is to say $\beta_{\text{budget}} \neq 0$.
+<br>
+
+#### 4.3.2) Test for `company`
+
+```{r}
+movies_new.no_company = lm(gross ~ . -company, data=movies_new)
+anova(movies_new.no_company, movies_new.mlr)
+```
+
+<br>
+$p$-value is lower than $\alpha$ so reject the null and keep `company` right now. 
+Which is to say $\beta_{\text{company}} \neq 0$.
+<br>
+
+#### 4.3.3) Test for `country`
+
+```{r}
+movies_new.no_country = lm(gross ~ . -country, data=movies_new)
+anova(movies_new.no_country, movies_new.mlr)
+```
+
+<br>
+$p$-value is lower than $\alpha$ so reject the null and keep `country` right now. 
+Which is to say $\beta_{\text{country}} \neq 0$.
+<br>
+
+#### 4.3.4) Test for `director`
+
+```{r}
+movies_new.no_director = lm(gross ~ . - director, data=movies_new)
+anova(movies_new.no_director, movies_new.mlr)
+```
+
+<br>
+$p$-value is higher than $\alpha$ so fail to reject the null. Which is to say $\beta_{\text{director}} = 0$.
+<br>
+
+#### 4.3.5) Test for `genre`
+
+```{r}
+movies_new.no_genre = lm(gross ~ . - genre, data=movies_new)
+anova(movies_new.no_genre, movies_new.mlr)
+```
+
+<br>
+$p$-value is lower than $\alpha$ so reject the null and keep `genre` right now. 
+Which is to say $\beta_{\text{genre}} \neq 0$.
+<br>
+
+#### 4.3.6) Test for `rating`
+
+```{r}
+movies_new.no_rating = lm(gross ~ . - rating, data=movies_new)
+anova(movies_new.no_rating, movies_new.mlr)
+```
+
+<br>
+$p$-value is lower than $\alpha$ so reject the null and keep `rating` right now. 
+Which is to say $\beta_{\text{rating}} \neq 0$.
+<br>
+
+#### 4.3.7) Test for `runtime`
+
+```{r}
+movies_new.no_runtime = lm(gross ~ . - runtime, data=movies_new)
+anova(movies_new.no_runtime, movies_new.mlr)
+```
+
+<br>
+$p$-value is lower than $\alpha$ so reject the null and keep `runtime` right now. 
+Which is to say $\beta_{\text{runtime}} \neq 0$.
+<br>
+
+#### 4.3.8) Test for `score`
+
+```{r}
+movies_new.no_score = lm(gross ~ . - score, data=movies_new)
+anova(movies_new.no_score, movies_new.mlr)
+```
+
+<br>
+$p$-value is lower than $\alpha$ so reject the null and keep `score` right now. 
+Which is to say $\beta_{\text{score}} \neq 0$.
+<br>
+
+#### 4.3.9) Test for `star`
+
+```{r}
+movies_new.no_star = lm(gross ~ . - star, data=movies_new)
+anova(movies_new.no_star, movies_new.mlr)
+```
+
+<br>
+$p$-value is higher than $\alpha$ so fail to reject the null. Which is to say $\beta_{\text{star}} = 0$.
+<br>
+
+#### 4.3.10) Test for `votes`
+
+```{r}
+movies_new.no_votes = lm(gross ~ . - votes, data=movies_new)
+anova(movies_new.no_votes, movies_new.mlr)
+```
+
+<br>
+$p$-value is lower than $\alpha$ so reject the null and keep `votes` right now. 
+Which is to say $\beta_{\text{votes}} \neq 0$.
+<br>
+
+#### 4.3.11) Test for `writer`
+
+```{r}
+movies_new.no_writer = lm(gross ~ . - writer, data=movies_new)
+anova(movies_new.no_writer, movies_new.mlr)
+```
+
+<br>
+$p$-value is lower than $\alpha$ so reject the null and keep `writer` right now. 
+Which is to say $\beta_{\text{writer}} \neq 0$.
+<br>
+
+#### 4.3.12) Test for `year`
+
+```{r}
+movies_new.no_year = lm(gross ~ . - year, data=movies_new)
+anova(movies_new.no_year, movies_new.mlr)
+```
+
+<br>
+$p$-value is lower than $\alpha$ so reject the null and keep `year` right now. 
+Which is to say $\beta_{\text{year}} \neq 0$.
+<br>
+
+*Iteration 1 Result*: We got two variables `star` and `director` that have non 
+significant slopes. However, `star` has a higher $p$-value than `director`, so for this
+iteration drop just `star` and make that the full model for the next iteration.
+
+### 4.4) Second Iteration
+
+#### 4.4.1) Test for `budget`
+
+```{r}
+movies_new.no_star_budget = lm(gross ~ . - star - budget, data=movies_new)
+anova(movies_new.no_star_budget, movies_new.no_star)
+```
+
+<br>
+$p$-value is lower than $\alpha$ so reject the null and keep `budget` right now. 
+Which is to say $\beta_{\text{budget}} \neq 0$.
+<br>
+
+#### 4.4.2) Test for `company`
+
+```{r}
+movies_new.no_star_company = lm(gross ~ . - star - company, data=movies_new)
+anova(movies_new.no_star_company, movies_new.no_star)
+```
+
+<br>
+$p$-value is lower than $\alpha$ so reject the null and keep `company` right now. 
+Which is to say $\beta_{\text{company}} \neq 0$.
+<br>
+
+#### 4.4.3) Test for `country`
+
+```{r}
+movies_new.no_star_country = lm(gross ~ . - star - country, data=movies_new)
+anova(movies_new.no_star_country, movies_new.no_star)
+```
+
+<br>
+$p$-value is lower than $\alpha$ so reject the null and keep `country` right now. 
+Which is to say $\beta_{\text{country}} \neq 0$.
+<br>
+
+#### 4.4.4) Test for `director`
+
+```{r}
+movies_new.no_star_director = lm(gross ~ . - star - director, data=movies_new)
+anova(movies_new.no_star_director, movies_new.no_star)
+```
+
+<br>
+$p$-value is higher than $\alpha$ so fail to reject the null. Which is to say $\beta_{\text{director}} = 0$.
+<br>
+
+#### 4.4.5) Test for `genre`
+
+```{r}
+movies_new.no_star_genre = lm(gross ~ . - star - genre, data=movies_new)
+anova(movies_new.no_star_genre, movies_new.no_star)
+```
+
+<br>
+$p$-value is lower than $\alpha$ so reject the null and keep `genre` right now. 
+Which is to say $\beta_{\text{genre}} \neq 0$.
+<br>
+
+#### 4.4.6) Test for `rating`
+
+```{r}
+movies_new.no_star_rating = lm(gross ~ . - star - rating, data=movies_new)
+anova(movies_new.no_star_rating, movies_new.no_star)
+```
+
+<br>
+$p$-value is lower than $\alpha$ so reject the null and keep `rating` right now. 
+Which is to say $\beta_{\text{rating}} \neq 0$.
+<br>
+
+#### 4.4.7) Test for `runtime`
+
+```{r}
+movies_new.no_star_runtime = lm(gross ~ . - star - runtime, data=movies_new)
+anova(movies_new.no_star_runtime, movies_new.no_star)
+```
+
+<br>
+$p$-value is lower than $\alpha$ so reject the null and keep `runtime` right now. 
+Which is to say $\beta_{\text{runtime}} \neq 0$.
+<br>
+
+#### 4.4.8) Test for `score`
+
+```{r}
+movies_new.no_star_score = lm(gross ~ . - star - score, data=movies_new)
+anova(movies_new.no_star_score, movies_new.no_star)
+```
+
+<br>
+$p$-value is lower than $\alpha$ so reject the null and keep `score` right now. 
+Which is to say $\beta_{\text{score}} \neq 0$.
+<br>
+
+#### 4.4.9) Test for `votes`
+
+```{r}
+movies_new.no_star_votes = lm(gross ~ . - star - votes, data=movies_new)
+anova(movies_new.no_star_votes, movies_new.no_star)
+```
+
+<br>
+$p$-value is lower than $\alpha$ so reject the null and keep `votes` right now. 
+Which is to say $\beta_{\text{votes}} \neq 0$.
+<br>
+
+#### 4.4.10) Test for `writer`
+
+```{r}
+movies_new.no_star_writer = lm(gross ~ . - star - writer, data=movies_new)
+anova(movies_new.no_star_writer, movies_new.no_star)
+```
+
+<br>
+$p$-value is lower than $\alpha$ so reject the null and keep `writer` right now. 
+Which is to say $\beta_{\text{writer}} \neq 0$.
+<br>
+
+#### 4.4.11) Test for `year`
+
+```{r}
+movies_new.no_star_year = lm(gross ~ . - star - year, data=movies_new)
+anova(movies_new.no_star_year, movies_new.no_star)
+```
+
+<br>
+$p$-value is lower than $\alpha$ so reject the null and keep `year` right now. 
+Which is to say $\beta_{\text{year}} \neq 0$.
+<br>
+
+*Iteration 2 Result*: Only `director` has a non significant slope. So, `director` is dropped from the full model (without `star`) and the resulting model is used as full model for the next iteration.
+
+### 4.5) Third Iteration
+
+#### 4.5.1) Test for `budget`
+
+```{r}
+movies_new.no_star_director_budget = lm(gross ~ . - star - director -
+                                          budget, data=movies_new)
+anova(movies_new.no_star_director_budget, movies_new.no_star_director)
+```
+
+<br>
+$p$-value is lower than $\alpha$ so reject the null and keep `budget` right now. 
+Which is to say $\beta_{\text{budget}} \neq 0$.
+<br>
+
+#### 4.5.2) Test for `company`
+
+```{r}
+movies_new.no_star_director_company = lm(gross ~ . - star - director -
+                                          company, data=movies_new)
+anova(movies_new.no_star_director_company, movies_new.no_star_director)
+```
+
+<br>
+$p$-value is lower than $\alpha$ so reject the null and keep `company` right now. 
+Which is to say $\beta_{\text{company}} \neq 0$.
+<br>
+
+#### 4.5.3) Test for `country`
+
+```{r}
+movies_new.no_star_director_country = lm(gross ~ . - star - director -
+                                          country, data=movies_new)
+anova(movies_new.no_star_director_country, movies_new.no_star_director)
+```
+
+<br>
+$p$-value is lower than $\alpha$ so reject the null and keep `country` right now. 
+Which is to say $\beta_{\text{country}} \neq 0$.
+<br>
+
+#### 4.5.4) Test for `genre`
+
+```{r}
+movies_new.no_star_director_genre = lm(gross ~ . - star - director -
+                                          genre, data=movies_new)
+anova(movies_new.no_star_director_genre, movies_new.no_star_director)
+```
+
+<br>
+$p$-value is lower than $\alpha$ so reject the null and keep `genre` right now. 
+Which is to say $\beta_{\text{genre}} \neq 0$.
+<br>
+
+#### 4.5.5) Test for `rating`
+
+```{r}
+movies_new.no_star_director_rating = lm(gross ~ . - star - director -
+                                          rating, data=movies_new)
+anova(movies_new.no_star_director_rating, movies_new.no_star_director)
+```
+
+<br>
+$p$-value is lower than $\alpha$ so reject the null and keep `rating` right now. 
+Which is to say $\beta_{\text{rating}} \neq 0$.
+<br>
+
+#### 4.5.6) Test for `runtime`
+
+```{r}
+movies_new.no_star_director_runtime = lm(gross ~ . - star - director -
+                                          runtime, data=movies_new)
+anova(movies_new.no_star_director_runtime, movies_new.no_star_director)
+```
+
+<br>
+$p$-value is lower than $\alpha$ so reject the null and keep `runtime` right now. 
+Which is to say $\beta_{\text{runtime}} \neq 0$.
+<br>
+
+#### 4.5.7) Test for `score`
+
+```{r}
+movies_new.no_star_director_score = lm(gross ~ . - star - director -
+                                          score, data=movies_new)
+anova(movies_new.no_star_director_score, movies_new.no_star_director)
+```
+
+<br>
+$p$-value is lower than $\alpha$ so reject the null and keep `score` right now. 
+Which is to say $\beta_{\text{score}} \neq 0$.
+<br>
+
+#### 4.5.8) Test for `votes`
+
+```{r}
+movies_new.no_star_director_votes = lm(gross ~ . - star - director -
+                                          votes, data=movies_new)
+anova(movies_new.no_star_director_votes, movies_new.no_star_director)
+```
+
+<br>
+$p$-value is lower than $\alpha$ so reject the null and keep `votes` right now. 
+Which is to say $\beta_{\text{votes}} \neq 0$.
+<br>
+
+#### 4.5.9) Test for `writer`
+
+```{r}
+movies_new.no_star_director_writer = lm(gross ~ . - star - director -
+                                          writer, data=movies_new)
+anova(movies_new.no_star_director_writer, movies_new.no_star_director)
+```
+
+<br>
+$p$-value is lower than $\alpha$ so reject the null and keep `writer` right now. 
+Which is to say $\beta_{\text{writer}} \neq 0$.
+<br>
+
+#### 4.5.10) Test for `year`
+
+```{r}
+movies_new.no_star_director_year = lm(gross ~ . - star - director -
+                                          year, data=movies_new)
+anova(movies_new.no_star_director_year, movies_new.no_star_director)
+```
+
+<br>
+$p$-value is lower than $\alpha$ so reject the null and keep `year` right now. 
+Which is to say $\beta_{\text{year}} \neq 0$.
+<br>
+
+*Iteration 3 Result*: There is no non significant slope. So, the algorithm is terminated and the full model used at the start of Iteration 3 is the best model according to the
+Backwards Selection Algorithm. Note that while this result is the 'best' according to the algorithm, it does not mean that it is necessarily the overall best model.
+
+### 4.6) Additional Tests
+
+To check whether two variables are the same, the following hypothesis test is 
+conducted:
+
+\[\begin{cases}
+&H_0: \beta_i=\beta_j\\
+&H_{\alpha}: \beta_i \neq \beta_j
+\end{cases}\]
+
+for any given $i$-th and $j$-th predictor, such that $i \neq j$. 
+
+#### 4.6.1) `budget` and `votes`
+
+```{r}
+test_1 = lm(gross ~ company + country  + genre + rating + 
+    runtime + score + I(budget + votes) + writer + year, data=movies_new)
+anova(test_1, movies_new.no_star_director)
+```
+
+<br>
+$p$-value is lower than $\alpha$ so reject the null. Which is to say 
+$\beta_{\text{budget}} \neq \beta_{\text{votes}}$.
+<br>
+
+#### 4.6.2) `budget` and `score`
+
+```{r}
+test_2 = lm(gross ~ company + country  + genre + rating + 
+    runtime + votes + I(budget + score) + writer + year, data=movies_new)
+anova(test_2, movies_new.no_star_director)
+```
+
+<br>
+$p$-value is lower than $\alpha$ so reject the null. Which is to say 
+$\beta_{\text{budget}} \neq \beta_{\text{score}}$.
+<br>
+
+#### 4.6.3) `budget` and `runtime`
+
+```{r}
+test_3 = lm(gross ~ company + country  + genre + rating + 
+    score + votes + I(budget + runtime) + writer + year, data=movies_new)
+anova(test_3, movies_new.no_star_director)
+```
+
+<br>
+$p$-value is lower than $\alpha$ so reject the null. Which is to say 
+$\beta_{\text{budget}} \neq \beta_{\text{runtime}}$.
+<br>
+
+#### 4.6.4) `score` and `votes`
+
+```{r}
+test_4 = lm(gross ~ company + country  + genre + rating + 
+    budget + runtime + I(score + votes) + writer + year, data=movies_new)
+anova(test_4, movies_new.no_star_director)
+```
+
+<br>
+$p$-value is lower than $\alpha$ so reject the null. Which is to say 
+$\beta_{\text{score}} \neq \beta_{\text{votes}}$.
+<br>
+
+#### 4.6.5) `score` and `runtime`
+
+```{r}
+test_5 = lm(gross ~ company + country  + genre + rating + 
+    budget + votes + I(score + runtime) + writer + year, data=movies_new)
+anova(test_5, movies_new.no_star_director)
+```
+
+<br>
+$p$-value is lower than $\alpha$ so reject the null. Which is to say 
+$\beta_{\text{score}} \neq \beta_{\text{runtime}}$.
+<br>
+
+#### 4.6.6) `votes` and `runtime`
+
+```{r}
+test_6 = lm(gross ~ company + country  + genre + rating + 
+    budget + score + I(votes + runtime) + writer + year, data=movies_new)
+anova(test_6, movies_new.no_star_director)
+```
+
+<br>
+$p$-value is lower than $\alpha$ so reject the null. Which is to say 
+$\beta_{\text{votes}} \neq \beta_{\text{runtime}}$.
+<br>
+
+*Result*: The full model at the end of the Backwards Selection Algorithm is still 
+better than any of the models tested above. So, that model will be chosen as final
+model. Below, the dataframe is filtered to remove `star` and `director` and the 
+final model is renamed appropriately.
+
+```{r}
+movie_final = select(movies_new, -star, -director)
+model_final = lm(gross~., data=movie_final)
+summary(model_final)
+```
+
+# 5) Diagnostics
+
+### 5.1) Unusual Observations
+
+#### 5.1.1) Leverages
+
+```{r}
+movies.leverages = lm.influence(model_final)$hat
+head(movies.leverages)
+```
+```{r}
+n = dim(movie_final)[1] 
+p = length(variable.names(model_final))
+
+movies.leverages.high = movies.leverages[movies.leverages>2*p/n]
+length(movies.leverages.high)
+```
+```{r}
+length(movies.leverages.high)/n
+```
+
+<br>
+There are 160 high leverage points, which represent about 3.45% of the total
+observations.
+<br>
+
+```{r}
+library('faraway')
+halfnorm(movies.leverages, nlab=6, labs=as.character(1:length(movies.leverages)), ylab="Leverages")
+```
+<br>
+There do appear to be leverages that are unusually large at the right end of the 
+plot.
+<br>
+
+```{r}
+IQR_y = IQR(movie_final$gross)
+
+QT1_y = quantile(movie_final$gross,0.25)
+QT3_y = quantile(movie_final$gross,0.75)
+
+lower_lim_y = QT1_y - IQR_y
+upper_lim_y = QT3_y + IQR_y
+
+vector_lim_y = c(lower_lim_y,upper_lim_y)
+
+vector_lim_y
+```
+
+```{r}
+movies.highlev = movie_final[movies.leverages>2*p/n,]
+movies.highlev_lower = movies.highlev[movies.highlev$gross < vector_lim_y[1], ]
+movies.highlev_upper = movies.highlev[movies.highlev$gross > vector_lim_y[2], ]
+movies.highlev2 = rbind(movies.highlev_lower,movies.highlev_upper)
+head(movies.highlev2)
+```
+
+```{r}
+nrow(movies.highlev2)
+```
+
+<br>
+85 observations can be considered as "bad-leverage points".
+<br>
+
+#### 5.1.2) Outliers
+
+```{r}
+movies.resid = rstudent(model_final)
+movies.resid.sorted = sort(abs(movies.resid), decreasing=TRUE)[31:40]
+movies.resid.sorted
+```
+
+```{r}
+bonferroni_cv = qt(.05/(2*n), n-p-1) 
+bonferroni_cv
+```
+
+<br>
+As seen above, there are 31 outliers in the dataset, as the 32nd value of the studentized
+residuals (arranged in descending order) is less than the absolute value of the critical value of the $T$-distribution with Bonferroni correction.
+<br>
+
+#### 5.1.3) Influential Observations
+
+```{r}
+movies.cooks = cooks.distance(model_final)
+sort(movies.cooks, decreasing = TRUE)[1:10]
+```
+
+<br>
+Based on the rule of thumb, since none of Cook's Distances $\geq$ 1, we 
+can say that there are no highly influential points in the data. 
+<br>
+
+```{r}
+plot(movies.cooks)
+```
+
+```{r}
+halfnorm(movies.cooks, 6, labs=as.character(1:length(movies.cooks)), ylab="Cook's distances")
+```
+<br>
+The graphs show again show that there are no Cook's Distances above 1.
+<br>
+
+### 5.2) Checking the Constant Variance Assumption
+
+```{r}
+plot(model_final, which=1)
+```
+<br>
+We see that the variance increases as we go from left to right, and the points do not 
+fall nicely within two parallel lines but rather they fall within two sloped lines. This
+indicates the violation of the constant variance assumption.
+<br>
+
+```{r}
+bptest(model_final)
+```
+
+Since the $p$-value is less that $\alpha$, we reject the null and conclude that the
+variance is not constant, that is, we have heteroscedasticity.
+
+### 5.3) Checking the Normality Assumption
+
+```{r}
+plot(model_final, which=2)
+```
+<br>
+The points do not lie on the same straight line, indicating departure from normality.
+<br>
+
+```{r}
+hist(model_final$residuals)
+```
+<br>
+The residuals seem to have a right skew, indicating departure from normality.
+<br>
+
+```{r}
+ks.test(model_final$residuals, rnorm(100))
+```
+
+<br>
+The $p$-value is less than $\alpha$. So, we reject the null hypotheses of normality and conclude that the normality assumption is not satisfied.
+<br>
+
+# 6) Confidence and Prediction Intervals
+
+<br>
+95% intervals will be created.
+<br>
+
+### 6.1) Confidence Interval
+
+#### 6.1.1) 'Little Shop of Horrors'
+
+```{r}
+conf_1 = filter(movies, name=='Little Shop of Horrors')
+conf_1
+```
+
+```{r}
+conf_1$gross
+```
+
+```{r}
+predict(model_final, 
+        newdata=conf_1,
+        interval="confidence")
+```
+
+#### 6.1.2) 'Armed and Dangerous'
+
+```{r}
+conf_2 = filter(movies, name=='Armed and Dangerous')
+conf_2
+```
+
+```{r}
+conf_2$gross
+```
+
+```{r}
+predict(model_final, 
+        newdata=conf_2,
+        interval="confidence")
+```
+
+### 6.2) Prediction Interval
+
+#### 6.2.1) 'Wonder Woman 1984'
+
+```{r}
+predict(model_final, 
+        newdata=data.frame(company='Small Company',
+                          country='USA',
+                          genre='Action',
+                          rating='PG-13',
+                          writer='2 or More Movies Written',
+                          runtime=151,
+                          score=5.4,
+                          budget=200000000,
+                          votes=233599,
+                          year=2020),
+        interval="prediction")
+```
+The actual `gross` sales value for the movie was 169600000.
+
+#### 6.2.2) 'Fantastic Beasts: The Secrets of Dumbledore'
+
+```{r}
+predict(model_final, 
+        newdata=data.frame(company='Small Company',
+                          country='Other',
+                          genre='Other',
+                          rating='PG-13',
+                          writer='2 or More Movies Written',
+                          runtime=143,
+                          score=6.2,
+                          budget=220000000,
+                          votes=213668,
+                          year=2022),
+        interval="prediction")
+```
+
+The actual `gross` sales value for the movie was 407200000.
+
+
+

@@ -1,0 +1,421 @@
+---
+title: "STAT 425 Case Study II"
+author: "Vedaant Agarwal, TJ Pavaritpong, Jay Lim, Jacob Razdolsky"
+date: "2023-12-12"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(ggplot2)
+library(lmtest)
+library(car)
+library(faraway)
+library(MASS)
+
+notinschool = read.csv('notinschool.csv')
+```
+
+# 1) Summary Statistics and Visualizations
+
+<br> Since all the predictors are categorical, we cannot perform the usual summary statistics. However, we can look at the frequency plot of the levels of each predictor, along with the summary statistics of the response. <br>
+
+```{r}
+summary(notinschool[-1])
+```
+
+<br> No, let us take a look at the distribution of the levels of the categorical variables. <br>
+
+```{r}
+ggplot(data=notinschool, aes(x=race)) + geom_bar()
+
+ggplot(data=notinschool, aes(x=gender)) + geom_bar()
+
+ggplot(data=notinschool, aes(x=school)) + geom_bar()
+
+ggplot(data=notinschool, aes(x=learner)) + geom_bar()
+```
+
+<br> We see that `race`, `gender` and `learner` have two levels each and `school` has four levels. Moreover, the distribution of these levels is pretty similar, except for `school`, which has a comparatively high "F1" school observations and comparatively low "F0" school observations.
+
+Apart from these distributions, we can also take a look at the individual relationship between our response (`absent`) and the categorical variables graphically through the means of side by side box-plots. <br>
+
+```{r}
+ggplot(data = notinschool, mapping = aes(x = race, y = absent)) + geom_boxplot()
+
+ggplot(data = notinschool, mapping = aes(x = gender, y = absent)) + geom_boxplot()
+
+ggplot(data = notinschool, mapping = aes(x = school, y = absent)) + geom_boxplot()
+
+ggplot(data = notinschool, mapping = aes(x = learner, y = absent)) + geom_boxplot()
+```
+
+<br> We do see that there is significant overlap between the boxes for every pair, so we reserve making any statements about the individual relationships for now. However, for example, we can note that for this observational study, the median number of days absent for aboriginal students was higher than the median number of days absent for non-aboriginal students. However, as of now we cannot say whether this median difference (or mean difference) was statistically significant. <br>
+
+# 2) Model Selection
+
+<br> Since we are working with only categorical predictors, we will fit a multi-way ANOVA model. Before starting, we should take a look at the 2-D interaction plots (for two categorical predictors and response), to see whether interaction terms should be included in the model <br>
+
+```{r}
+interaction.plot(notinschool$race, notinschool$gender, notinschool$absent)
+interaction.plot(notinschool$race, notinschool$school, notinschool$absent)
+interaction.plot(notinschool$race, notinschool$learner, notinschool$absent)
+
+interaction.plot(notinschool$gender, notinschool$race, notinschool$absent)
+interaction.plot(notinschool$gender, notinschool$school, notinschool$absent)
+interaction.plot(notinschool$gender, notinschool$learner, notinschool$absent)
+
+interaction.plot(notinschool$school, notinschool$race, notinschool$absent)
+interaction.plot(notinschool$school, notinschool$gender, notinschool$absent)
+interaction.plot(notinschool$school, notinschool$learner, notinschool$absent)
+
+interaction.plot(notinschool$learner, notinschool$race, notinschool$absent)
+interaction.plot(notinschool$learner, notinschool$school, notinschool$absent)
+interaction.plot(notinschool$learner, notinschool$gender, notinschool$absent)
+```
+
+<br> As evidenced by the intersecting lines in a lot of the graphs, we see that interaction between the predictors is present. For now, we will include all interaction terms, since we might have higher order interaction terms which are significant, and which might make us want to keep the lower order terms because of the hierarchy principle.
+
+Now, let us fit a multi-way ANOVA model and select the best model. Note that since we have 4 predictors, we will use an Unbalanced ANOVA model with Type III sum of squares, because it is unlikely that every treatment in the dataset has an equal number of observations. <br>
+
+```{r}
+notinschool$school = as.factor(notinschool$school)
+suppressWarnings(Anova(lm(absent ~ race * learner * gender * school, data = notinschool), type = "III"))
+```
+
+<br> The highest order interaction `race:learner:gender:school` is not significant, so we remove it and fit the model again. <br>
+
+```{r}
+suppressWarnings(Anova(lm(absent ~ race * learner * gender * school - race:learner:gender:school, data = notinschool), type = "III"))
+```
+
+<br> There are 4 highest order terms. The least significant term is `race:gender:school`, so we remove that and fit the model again. <br>
+
+```{r}
+suppressWarnings(Anova(lm(absent ~ race * learner * gender * school - race:learner:gender:school - race:gender:school, data = notinschool), type = "III"))
+```
+
+<br> There are 3 highest order terms. The least significant term is `learner:gender:school`, so we remove that and fit the model again. <br>
+
+```{r}
+suppressWarnings(Anova(lm(absent ~ race * learner * gender * school - race:learner:gender:school - race:gender:school - learner:gender:school, data = notinschool), type = "III"))
+```
+
+<br> There are 2 highest order terms. The least significant term is `race:learner:gender`, so we remove that and fit the model again. <br>
+
+```{r}
+suppressWarnings(Anova(lm(absent ~ race * learner * gender * school - race:learner:gender:school - race:gender:school - learner:gender:school - race:learner:gender, data = notinschool), type = "III"))
+```
+
+<br> The highest order interaction present in the model `race:learner:school` is significant, so we keep all the lower order interactions and the base predictors by following the hierarchy principle.
+
+So, we have our final selected model that has interaction terms present. Let us fit a factor effects model with sum constraints, to compute the estimators for effects and interaction terms. The summary table for the model is shown below. <br>
+
+```{r}
+my.contrasts <- list(race = "contr.sum", gender = "contr.sum", school = "contr.sum",
+                     learner = "contr.sum")
+
+model.full = lm(absent ~ race * learner * gender * school - race:learner:gender:school - race:gender:school - learner:gender:school - race:learner:gender,
+                data = notinschool, contrasts=my.contrasts)
+
+summary(model.full)
+```
+
+# 3) Model Diagnostics
+
+<br> Let us perform some model diagnostics to check for any departures from model assumptions <br>
+
+```{r}
+plot(model.full, which = 1)
+```
+
+```{r}
+bptest(model.full)
+```
+
+<br> Both through the fitted values vs residuals plot, as well as from the Breusch-Pagan test, we can conclude that the constant variance assumption is not met for this model. <br>
+
+```{r}
+plot(model.full, which = 2)
+```
+
+```{r}
+ks.test(model.full$residuals, "pnorm")
+```
+
+<br> Similarly, from the Q-Q plot, as well as from the Kolmogorov-Smirnov Normality test, it is evident that the normality assumption is not satisfied.
+
+To remedy this, let us try and perform a Box-Cox transformation. However, before doing that, we must shift the values of the response by adding 1, because the response contains 0 as observations, and the transformation can only happen if the response is positive. <br>
+
+```{r}
+notinschool$absent = notinschool$absent + 1
+```
+
+<br> After shifting the response, we now refit the model, and can proceed to perform the Box-Cox transformation <br>
+
+```{r}
+model.full = lm(absent ~ race * learner * gender * school - race:learner:gender:school - race:gender:school - learner:gender:school - race:learner:gender,
+                data = notinschool, contrasts=my.contrasts)
+
+trans = boxcox(model.full)
+
+lambda <- trans$x[which.max(trans$y)]
+lambda
+```
+
+<br> So, we see that a $\lambda = 0.25$, can be used, which is equivalent to taking the quartic root of the response. Using this suggestion, we fit a new model using this transformation on the response. <br>
+
+```{r}
+model.full.new = lm(absent**(1/4) ~ race * learner * gender * school - race:learner:gender:school - race:gender:school - learner:gender:school - race:learner:gender, data = notinschool, contrasts=my.contrasts)
+```
+
+<br> Let us check for the model assumptions again. <br>
+
+```{r}
+plot(model.full.new, which = 1)
+```
+
+<br>
+
+```{r}
+bptest(model.full.new)
+```
+
+<br> Both the fitted values vs residuals, and the Breusch-Pagan test indicate that the constant variance assumption is now met. <br>
+
+```{r}
+plot(model.full.new, which = 2)
+```
+
+<br>
+
+```{r}
+ks.test(model.full.new$residuals, "pnorm")
+```
+
+<br> As seen by the Q-Q plot and the ks test results, the normality assumption is still not met, but there is a significant improvement from the previous model. However, at this point we decided not to introduce any changes to the predictors to try and better the normality assumption to preserve the interpretability of our final model.
+
+Next, we checked whether the highest order interaction term is significant after the response transformtion. <br>
+
+```{r}
+Anova(model.full.new, type = "III")
+```
+
+<br> The highest order interaction is still significant, so we choose this as the final model for now and investigate for unusual observations. <br>
+
+```{r}
+mod.leverages = influence(model.full.new)$hat
+halfnorm(mod.leverages, 6, labs=as.character(1:length(mod.leverages)), ylab="Leverages")
+```
+
+<br>
+
+```{r}
+n = dim(notinschool)[1]
+p = 11
+mod.lev = lm.influence(model.full.new)$hat
+mod.lev.high = mod.lev[mod.lev > ((2 * p)/n)]
+mod.lev.high
+```
+
+<br>
+
+```{r}
+length(mod.lev.high)
+```
+
+<br> We see that there are 50 high leverage points. <br>
+
+```{r}
+IQR_y = IQR(notinschool$absent)
+q1 = quantile(notinschool$absent, 0.25)
+q3 = quantile(notinschool$absent, 0.75)
+lower_lim = q1 - IQR_y
+upper_lim = q3 + IQR_y
+range = c(lower_lim, upper_lim)
+mod.highlev = notinschool[mod.lev > ((2*p)/n),]
+mod.highlev.lower = mod.highlev[mod.highlev$absent < range[1],]
+mod.highlev.upper = mod.highlev[mod.highlev$absent > range[2],]
+lev.bad = rbind(mod.highlev.lower, mod.highlev.upper)
+lev.bad
+```
+
+<br> We see that there are 4 bad high leverage points, shown above. However, we decided not to remove them from the model. <br>
+
+```{r}
+mod.cooks = cooks.distance(model.full.new)
+plot(mod.cooks)
+```
+
+<br>
+
+```{r}
+which(mod.cooks >= 1)
+```
+
+<br> We see that there are no highly influential points, as shown by none of the Cook's distances being greater than or equal to 1. <br>
+
+```{r}
+mod.resid = rstudent(model.full.new)
+mod.resid.sorted = sort(abs(mod.resid), decreasing=TRUE)
+bonferroni_cv1 = abs(qt(0.05/(2 * n), n-p-1))
+which(mod.resid.sorted >= bonferroni_cv1)
+```
+
+<br> We also see that there are no outliers, since none of the studentized residuals is higher than the critical value with Bonferroni correction. <br>
+
+```{r}
+summary(model.full.new)
+```
+
+<br> The table above shows the summary of the final model. <br>
+
+# 4) Optimal Combination of Factor Levels
+
+<br> To investigate the effects of the predictors, we can perform family pairwise comparisons. Using Tukey's family coefficient, we plot all pairwise family comparisons for all treatments. <br>
+
+```{r}
+factor_1 <- TukeyHSD(aov(model.full.new), "race")
+plot(factor_1)
+
+factor_2 <- TukeyHSD(aov(model.full.new), "learner")
+plot(factor_2)
+
+factor_3 <- TukeyHSD(aov(model.full.new), "gender")
+plot(factor_3)
+
+factor_4 <- TukeyHSD(aov(model.full.new), "school")
+plot(factor_4)
+
+factor_5 <- TukeyHSD(aov(model.full.new), "race:learner")
+plot(factor_5)
+
+factor_6 <- TukeyHSD(aov(model.full.new), "race:gender")
+plot(factor_6)
+
+factor_7 <- TukeyHSD(aov(model.full.new), "learner:gender")
+plot(factor_7)
+
+factor_8 <- TukeyHSD(aov(model.full.new), "race:school")
+plot(factor_8)
+
+factor_9 <- TukeyHSD(aov(model.full.new), "learner:school")
+plot(factor_9)
+
+factor_10 <- TukeyHSD(aov(model.full.new), "gender:school")
+plot(factor_10)
+
+factor_11 <- TukeyHSD(aov(model.full.new), "race:learner:school")
+plot(factor_11)
+```
+
+<br>
+
+```{r}
+factor_1_signif <- data.frame(factor_1$`race`)
+factor_1_signif %>% filter(p.adj < 0.05)
+
+factor_2_signif <- data.frame(factor_2$`learner`)
+factor_2_signif %>% filter(p.adj < 0.05)
+
+factor_3_signif <- data.frame(factor_3$`gender`)
+factor_3_signif %>% filter(p.adj < 0.05)
+
+factor_4_signif <- data.frame(factor_4$`school`)
+factor_4_signif %>% filter(p.adj < 0.05)
+
+factor_5_signif <- data.frame(factor_5$`race:learner`)
+factor_5_signif %>% filter(p.adj < 0.05)
+
+factor_6_signif <- data.frame(factor_6$`race:gender`)
+factor_6_signif %>% filter(p.adj < 0.05)
+
+factor_7_signif <- data.frame(factor_7$`learner:gender`)
+factor_7_signif %>% filter(p.adj < 0.05)
+
+factor_8_signif <- data.frame(factor_8$`race:school`)
+factor_8_signif %>% filter(p.adj < 0.05)
+
+factor_9_signif <- data.frame(factor_9$`learner:school`)
+factor_9_signif %>% filter(p.adj < 0.05)
+
+factor_10_signif <- data.frame(factor_10$`gender:school`)
+factor_10_signif %>% filter(p.adj < 0.05)
+
+factor_11_signif <- data.frame(factor_11$`race:learner:school`)
+factor_11_signif %>% filter(p.adj < 0.05)
+```
+
+<br> Next, we filter out the treatment levels for all treatments that are not significant. The results for each treatment are tabulated above, showing only the treatment level pairs that are significant. Now we want to select the optimal combination of factor levels:
+<br>
+
+```{r}
+best <- data.frame(TukeyHSD(aov(absent**(1/4) ~ race * learner * gender * school, data=notinschool), "race:learner:gender:school")$`race:learner:gender:school`)
+best |> filter(diff == min(best$diff))
+```
+
+```{r}
+best |> filter(diff == max(best$diff))
+```
+
+<br>
+Since we want the lowest absence rate, we select the factor levels for which the absolute value in the difference of means is the largest. So, as seen above, we should expect, for this dataset, non-aboriginal, average learners, females, and school F2 to have the lowest absence rate.
+<br>
+
+# 5) Chosen Research Question
+
+<br> We looked at the model describing the differences in attendance due to all the predictors. Throughout the analysis, we saw that cultural origin did seem to have the largest individual impact, but we were not able to quantify it due to interaction. For this follow-up study, we would like to fit a one-way ANOVA model with just the cultural origin as a predictor and quantify the relation. <br>
+
+```{r}
+model.single = lm(absent ~ race, data = notinschool)
+summary(model.single)
+
+```
+
+<br> Let's check our model assumptions <br>
+
+```{r}
+plot(model.single, which = 1)
+bptest(model.single)
+```
+
+<br> Constant variance assumption is satisfied. <br>
+
+```{r}
+plot(model.single, which = 2)
+ks.test(model.single$residuals, "pnorm")
+```
+
+<br> Normality assumption is violated based on the QQ-plot and the Kolmogorov-Smirnov Tests. So, let's transform the model to fix it.<br>
+
+```{r}
+model.single = lm(log(absent) ~ race, data = notinschool)
+summary(model.single)
+```
+
+```{r}
+plot(model.single, which = 1)
+bptest(model.single)
+plot(model.single, which = 2)
+ks.test(model.single$residuals, "pnorm")
+```
+
+<br>After fitting the transformed model, the constant variance assumption remains satisfied, and the Normality assumption is now satisfied. <br>
+
+<br> We then check for equality of means, to check whether the levels are the same. <br>
+
+```{r}
+anova(model.single)
+```
+
+<br> The $p$-value is less than $\alpha = 0.05$, so we reject the null and conclude that there are differences among the two cultures in how they affect number of days absent for this dataset. Lets see the direction of this relation for the two levels. <br>
+
+```{r}
+TukeyHSD(aov(absent~race, notinschool), data=notinschool)
+```
+
+<br> Thus, we see that aboriginal children tend to have a higher number of days absent from school than non-aboriginal students for this dataset. <br>
