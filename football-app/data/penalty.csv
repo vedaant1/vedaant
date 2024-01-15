@@ -1,0 +1,280 @@
+Year,Match,Country,Zone,Foot,Keeper,OnTarget,Goal,Penalty_Number,Elimination
+1982,France vs. West Germany,France,7,R,R,1,1,1,0
+1982,France vs. West Germany,West Germany,9,R,C,1,1,2,0
+1982,France vs. West Germany,France,6,R,L,1,1,3,0
+1982,France vs. West Germany,West Germany,2,R,C,1,1,4,0
+1982,France vs. West Germany,France,9,R,L,1,1,5,0
+1982,France vs. West Germany,West Germany,4,R,L,1,0,6,0
+1982,France vs. West Germany,France,8,L,L,1,0,7,0
+1982,France vs. West Germany,West Germany,3,R,R,1,1,8,0
+1982,France vs. West Germany,France,9,R,L,1,1,9,0
+1982,France vs. West Germany,West Germany,9,R,C,1,1,10,1
+1982,France vs. West Germany,France,7,R,L,1,0,11,0
+1982,France vs. West Germany,West Germany,9,R,C,1,1,12,1
+1986,Brazil vs. France,Brazil,4,R,L,1,0,1,0
+1986,Brazil vs. France,France,2,R,R,1,1,2,0
+1986,Brazil vs. France,Brazil,6,R,R,1,1,3,0
+1986,Brazil vs. France,France,6,R,R,1,1,4,0
+1986,Brazil vs. France,Brazil,8,R,L,1,1,5,0
+1986,Brazil vs. France,France,9,L,R,1,1,6,0
+1986,Brazil vs. France,Brazil,4,L,R,1,1,7,0
+1986,Brazil vs. France,France,1,R,R,0,0,8,0
+1986,Brazil vs. France,Brazil,7,R,L,0,0,9,0
+1986,Brazil vs. France,France,7,R,R,1,1,10,1
+1986,West Germany vs. Mexico,West Germany,1,L,R,1,1,1,0
+1986,West Germany vs. Mexico,Mexico,6,L,L,1,1,2,0
+1986,West Germany vs. Mexico,West Germany,8,L,L,1,1,3,0
+1986,West Germany vs. Mexico,Mexico,8,R,L,1,0,4,0
+1986,West Germany vs. Mexico,West Germany,7,R,L,1,1,5,0
+1986,West Germany vs. Mexico,Mexico,7,R,L,1,0,6,0
+1986,West Germany vs. Mexico,West Germany,4,R,L,1,1,7,1
+1986,Spain vs. Belgium,Spain,7,R,R,1,1,1,0
+1986,Spain vs. Belgium,Belgium,9,R,L,1,1,2,0
+1986,Spain vs. Belgium,Spain,7,R,L,1,0,3,0
+1986,Spain vs. Belgium,Belgium,4,R,R,1,1,4,0
+1986,Spain vs. Belgium,Spain,1,R,L,1,1,5,0
+1986,Spain vs. Belgium,Belgium,7,R,R,1,1,6,0
+1986,Spain vs. Belgium,Spain,1,R,L,1,1,7,0
+1986,Spain vs. Belgium,Belgium,5,L,R,1,1,8,0
+1986,Spain vs. Belgium,Spain,1,R,R,1,1,9,1
+1986,Spain vs. Belgium,Belgium,5,R,L,1,1,10,1
+1990,Romania vs. Ireland,Romania,3,L,R,1,1,1,0
+1990,Romania vs. Ireland,Ireland,2,L,R,1,1,2,0
+1990,Romania vs. Ireland,Romania,9,R,R,1,1,3,0
+1990,Romania vs. Ireland,Ireland,9,R,L,1,1,4,0
+1990,Romania vs. Ireland,Romania,4,L,L,1,1,5,0
+1990,Romania vs. Ireland,Ireland,7,L,R,1,1,6,0
+1990,Romania vs. Ireland,Romania,1,R,L,1,1,7,0
+1990,Romania vs. Ireland,Ireland,8,L,L,1,1,8,0
+1990,Romania vs. Ireland,Romania,7,R,L,1,0,9,0
+1990,Romania vs. Ireland,Ireland,6,R,l,1,1,10,1
+1990,Argentina vs. Yugoslavia,Argentina,6,R,L,1,1,1,0
+1990,Argentina vs. Yugoslavia,Yugoslavia,1,R,R,0,0,2,0
+1990,Argentina vs. Yugoslavia,Argentina,1,R,R,1,1,3,0
+1990,Argentina vs. Yugoslavia,Yugoslavia,4,R,R,1,1,4,0
+1990,Argentina vs. Yugoslavia,Argentina,7,L,L,1,0,5,0
+1990,Argentina vs. Yugoslavia,Yugoslavia,7,L,R,1,1,6,0
+1990,Argentina vs. Yugoslavia,Argentina,3,R,L,0,0,7,0
+1990,Argentina vs. Yugoslavia,Yugoslavia,7,R,L,1,0,8,0
+1990,Argentina vs. Yugoslavia,Argentina,7,R,C,1,1,9,0
+1990,Argentina vs. Yugoslavia,Yugoslavia,6,R,R,1,0,10,1
+1990,Italy vs. Argentina,Italy,8,R,R,1,1,1,0
+1990,Italy vs. Argentina,Argentina,5,R,L,1,1,2,0
+1990,Italy vs. Argentina,Italy,4,R,L,1,1,3,0
+1990,Italy vs. Argentina,Argentina,8,R,R,1,1,4,0
+1990,Italy vs. Argentina,Italy,4,L,L,1,1,5,0
+1990,Italy vs. Argentina,Argentina,9,R,L,1,1,6,0
+1990,Italy vs. Argentina,Italy,6,R,R,1,0,7,0
+1990,Italy vs. Argentina,Argentina,7,L,R,1,1,8,0
+1990,Italy vs. Argentina,Italy,9,L,R,1,0,9,1
+1990,England vs. West Germany,England,7,R,R,1,1,1,0
+1990,England vs. West Germany,West Germany,7,R,L,1,1,2,0
+1990,England vs. West Germany,England,6,R,R,1,1,3,0
+1990,England vs. West Germany,West Germany,4,R,L,1,1,4,0
+1990,England vs. West Germany,England,1,R,L,1,0,5,0
+1990,England vs. West Germany,West Germany,6,R,R,1,1,6,0
+1990,England vs. West Germany,England,8,L,L,1,0,7,0
+1990,England vs. West Germany,West Germany,6,R,R,1,1,8,0
+1990,England vs. West Germany,England,1,L,L,0,0,9,1
+1994,Mexico vs. Bulgaria,Mexico,2,L,R,0,0,1,0
+1994,Mexico vs. Bulgaria,Bulgaria,4,L,l,1,0,2,0
+1994,Mexico vs. Bulgaria,Mexico,9,R,R,1,0,3,0
+1994,Mexico vs. Bulgaria,Bulgaria,2,R,R,1,1,4,0
+1994,Mexico vs. Bulgaria,Mexico,7,R,L,1,0,5,0
+1994,Mexico vs. Bulgaria,Bulgaria,1,R,L,1,1,6,0
+1994,Mexico vs. Bulgaria,Mexico,9,R,C,1,1,7,0
+1994,Mexico vs. Bulgaria,Bulgaria,3,R,R,1,1,8,1
+1994,Sweden vs. Romania,Sweden,2,R,R,0,0,1,0
+1994,Sweden vs. Romania,Romania,9,R,R,1,1,2,0
+1994,Sweden vs. Romania,Sweden,6,R,R,1,1,3,0
+1994,Sweden vs. Romania,Romania,9,L,L,1,1,4,0
+1994,Sweden vs. Romania,Sweden,7,R,C,1,1,5,0
+1994,Sweden vs. Romania,Romania,4,R,R,1,1,6,0
+1994,Sweden vs. Romania,Sweden,7,R,R,1,1,7,0
+1994,Sweden vs. Romania,Romania,5,R,R,1,0,8,0
+1994,Sweden vs. Romania,Sweden,2,R,L,1,1,9,0
+1994,Sweden vs. Romania,Romania,4,R,R,1,1,10,1
+1994,Sweden vs. Romania,Sweden,9,R,L,1,1,11,0
+1994,Sweden vs. Romania,Romania,9,R,R,1,0,12,1
+1994,Italy vs. Brazil,Italy,2,R,R,0,0,1,0
+1994,Italy vs. Brazil,Brazil,4,R,L,1,0,2,0
+1994,Italy vs. Brazil,Italy,4,R,R,1,1,3,0
+1994,Italy vs. Brazil,Brazil,4,R,C,1,1,4,0
+1994,Italy vs. Brazil,Italy,5,L,L,1,1,5,0
+1994,Italy vs. Brazil,Brazil,9,L,L,1,1,6,0
+1994,Italy vs. Brazil,Italy,6,R,R,1,0,7,0
+1994,Italy vs. Brazil,Brazil,6,R,L,1,1,8,0
+1994,Italy vs. Brazil,Italy,2,R,C,0,0,9,1
+1998,Argentina vs. England,Argentina,9,L,R,1,1,1,0
+1998,Argentina vs. England,England,1,R,L,1,1,2,0
+1998,Argentina vs. England,Argentina,6,R,R,1,0,3,0
+1998,Argentina vs. England,England,6,R,R,1,0,4,0
+1998,Argentina vs. England,Argentina,1,R,L,1,1,5,0
+1998,Argentina vs. England,England,1,R,L,1,1,6,0
+1998,Argentina vs. England,Argentina,7,R,L,1,1,7,0
+1998,Argentina vs. England,England,1,R,R,1,1,8,0
+1998,Argentina vs. England,Argentina,9,R,C,1,1,9,0
+1998,Argentina vs. England,England,5,R,L,1,0,10,1
+1998,France vs. Italy,France,7,R,R,1,1,1,0
+1998,France vs. Italy,Italy,9,R,C,1,1,2,0
+1998,France vs. Italy,France,7,L,L,1,0,3,0
+1998,France vs. Italy,Italy,7,R,L,1,0,4,0
+1998,France vs. Italy,France,7,R,R,1,1,5,0
+1998,France vs. Italy,Italy,4,R,L,1,1,6,0
+1998,France vs. Italy,France,9,R,R,1,1,7,0
+1998,France vs. Italy,Italy,3,L,R,1,1,8,0
+1998,France vs. Italy,France,5,R,R,1,1,9,0
+1998,France vs. Italy,Italy,2,R,R,0,0,10,0
+1998,Brazil vs. Netherlands,Brazil,2,R,R,1,1,1,0
+1998,Brazil vs. Netherlands,Netherlands,4,L,L,1,1,2,0
+1998,Brazil vs. Netherlands,Brazil,6,L,L,1,1,3,0
+1998,Brazil vs. Netherlands,Netherlands,9,R,R,1,1,4,0
+1998,Brazil vs. Netherlands,Brazil,5,R,R,1,1,5,0
+1998,Brazil vs. Netherlands,Netherlands,6,L,R,1,0,6,0
+1998,Brazil vs. Netherlands,Brazil,1,R,L,1,1,7,0
+1998,Brazil vs. Netherlands,Netherlands,7,R,L,1,0,8,1
+2002,Ireland vs. Spain,Ireland,2,R,R,1,1,1,0
+2002,Ireland vs. Spain,Spain,4,R,R,1,1,2,0
+2002,Ireland vs. Spain,Ireland,2,R,R,0,0,3,0
+2002,Ireland vs. Spain,Spain,6,R,C,1,1,4,0
+2002,Ireland vs. Spain,Ireland,5,R,C,1,0,5,0
+2002,Ireland vs. Spain,Spain,9,L,C,0,0,6,0
+2002,Ireland vs. Spain,Ireland,6,L,R,1,0,7,0
+2002,Ireland vs. Spain,Spain,7,R,R,0,0,8,1
+2002,Ireland vs. Spain,Ireland,3,R,C,1,1,9,1
+2002,Ireland vs. Spain,Spain,8,R,L,1,1,10,1
+2002,South Korea vs. Spain,South Korea,9,R,R,1,1,1,0
+2002,South Korea vs. Spain,Spain,5,R,R,1,1,2,0
+2002,South Korea vs. Spain,South Korea,6,R,C,1,1,3,0
+2002,South Korea vs. Spain,Spain,7,R,R,1,1,4,0
+2002,South Korea vs. Spain,South Korea,6,R,L,1,1,5,0
+2002,South Korea vs. Spain,Spain,3,R,C,1,1,6,0
+2002,South Korea vs. Spain,South Korea,8,R,L,1,1,7,0
+2002,South Korea vs. Spain,Spain,5,R,C,1,0,8,0
+2002,South Korea vs. Spain,South Korea,3,R,L,1,1,9,1
+2006,Ukraine vs. Switzerland,Ukraine,7,R,L,1,0,1,0
+2006,Ukraine vs. Switzerland,Switzerland,7,L,L,1,0,2,0
+2006,Ukraine vs. Switzerland,Ukraine,5,R,L,1,1,3,0
+2006,Ukraine vs. Switzerland,Switzerland,1,R,L,0,0,4,0
+2006,Ukraine vs. Switzerland,Ukraine,6,R,L,1,1,5,0
+2006,Ukraine vs. Switzerland,Switzerland,2,R,R,1,0,6,0
+2006,Ukraine vs. Switzerland,Ukraine,7,R,R,1,1,7,1
+2006,Germany vs. Argentina,Germany,6,R,R,1,1,1,0
+2006,Germany vs. Argentina,Argentina,1,R,L,1,1,2,0
+2006,Germany vs. Argentina,Germany,4,R,C,1,1,3,0
+2006,Germany vs. Argentina,Argentina,9,R,R,1,0,4,0
+2006,Germany vs. Argentina,Germany,9,L,L,1,1,5,0
+2006,Germany vs. Argentina,Argentina,7,R,L,1,1,6,0
+2006,Germany vs. Argentina,Germany,9,R,L,1,1,7,0
+2006,Germany vs. Argentina,Argentina,9,L,R,1,0,8,1
+2006,Portugal vs. England,Portugal,7,R,L,1,1,1,0
+2006,Portugal vs. England,England,8,R,C,1,0,2,0
+2006,Portugal vs. England,Portugal,4,L,R,0,0,3,0
+2006,Portugal vs. England,England,7,R,L,1,1,4,0
+2006,Portugal vs. England,Portugal,7,R,L,0,0,5,0
+2006,Portugal vs. England,England,5,R,R,1,0,6,0
+2006,Portugal vs. England,Portugal,4,R,C,1,1,7,0
+2006,Portugal vs. England,England,7,R,L,1,0,8,0
+2006,Portugal vs. England,Portugal,6,R,L,1,1,9,1
+2006,Italy vs. France,Italy,2,R,L,1,1,1,0
+2006,Italy vs. France,France,9,R,L,1,1,2,0
+2006,Italy vs. France,Italy,9,L,R,1,1,3,0
+2006,Italy vs. France,France,1,R,R,0,0,4,0
+2006,Italy vs. France,Italy,1,R,L,1,1,5,0
+2006,Italy vs. France,France,7,L,R,1,1,6,0
+2006,Italy vs. France,Italy,4,R,R,1,1,7,0
+2006,Italy vs. France,France,3,R,L,1,1,8,0
+2006,Italy vs. France,Italy,3,L,L,1,1,9,1
+2010,Paraguay vs. Japan,Paraguay,7,R,L,1,1,1,0
+2010,Paraguay vs. Japan,Japan,6,R,L,1,1,2,0
+2010,Paraguay vs. Japan,Paraguay,9,R,R,1,1,3,0
+2010,Paraguay vs. Japan,Japan,4,R,L,1,1,4,0
+2010,Paraguay vs. Japan,Paraguay,9,R,L,1,1,5,0
+2010,Paraguay vs. Japan,Japan,1,R,L,0,0,6,0
+2010,Paraguay vs. Japan,Paraguay,2,R,L,1,1,7,0
+2010,Paraguay vs. Japan,Japan,8,L,R,1,1,8,1
+2010,Paraguay vs. Japan,Paraguay,7,L,R,1,1,9,1
+2010,Uruguay vs. Ghana,Uruguay,6,R,L,1,1,1,0
+2010,Uruguay vs. Ghana,Ghana,3,R,R,1,1,2,0
+2010,Uruguay vs. Ghana,Uruguay,1,R,L,1,1,3,0
+2010,Uruguay vs. Ghana,Ghana,1,R,L,1,1,4,0
+2010,Uruguay vs. Ghana,Uruguay,8,R,C,1,1,5,0
+2010,Uruguay vs. Ghana,Ghana,8,R,R,1,0,6,0
+2010,Uruguay vs. Ghana,Uruguay,2,R,L,0,0,7,0
+2010,Uruguay vs. Ghana,Ghana,9,R,R,1,0,8,0
+2010,Uruguay vs. Ghana,Uruguay,5,L,L,1,1,9,1
+2014,Brazil vs. Chile,Brazil,4,R,R,1,1,1,0
+2014,Brazil vs. Chile,Chile,5,R,C,1,0,2,0
+2014,Brazil vs. Chile,Brazil,7,R,C,0,0,3,0
+2014,Brazil vs. Chile,Chile,7,R,L,1,0,4,0
+2014,Brazil vs. Chile,Brazil,6,L,R,1,1,5,0
+2014,Brazil vs. Chile,Chile,3,R,C,1,1,6,0
+2014,Brazil vs. Chile,Brazil,8,L,R,1,0,7,0
+2014,Brazil vs. Chile,Chile,8,R,R,1,1,8,0
+2014,Brazil vs. Chile,Brazil,7,R,C,1,1,9,0
+2014,Brazil vs. Chile,Chile,6,R,R,0,0,10,1
+2014,Costa Rica vs. Greece,Costa Rica,2,R,L,1,1,1,0
+2014,Costa Rica vs. Greece,Greece,4,L,C,1,1,2,0
+2014,Costa Rica vs. Greece,Costa Rica,3,L,L,1,1,3,0
+2014,Costa Rica vs. Greece,Greece,9,R,L,1,1,4,0
+2014,Costa Rica vs. Greece,Costa Rica,5,R,L,1,1,5,0
+2014,Costa Rica vs. Greece,Greece,3,L,R,1,1,6,0
+2014,Costa Rica vs. Greece,Costa Rica,7,L,C,1,1,7,0
+2014,Costa Rica vs. Greece,Greece,4,R,L,1,0,8,0
+2014,Costa Rica vs. Greece,Costa Rica,1,R,L,1,1,9,1
+2014,Costa Rica vs. Netherlands,Costa Rica,9,R,R,1,1,1,0
+2014,Costa Rica vs. Netherlands,Netherlands,9,L,R,1,1,2,0
+2014,Costa Rica vs. Netherlands,Costa Rica,9,L,R,1,0,3,0
+2014,Costa Rica vs. Netherlands,Netherlands,1,L,R,1,1,4,0
+2014,Costa Rica vs. Netherlands,Costa Rica,6,R,R,1,1,5,0
+2014,Costa Rica vs. Netherlands,Netherlands,4,R,R,1,1,6,0
+2014,Costa Rica vs. Netherlands,Costa Rica,1,R,L,1,1,7,0
+2014,Costa Rica vs. Netherlands,Netherlands,7,R,L,1,1,8,0
+2014,Costa Rica vs. Netherlands,Costa Rica,9,R,R,1,0,9,1
+2014,Netherlands vs. Argentina,Netherlands,9,R,R,1,0,1,0
+2014,Netherlands vs. Argentina,Argentina,4,L,C,1,1,2,0
+2014,Netherlands vs. Argentina,Netherlands,9,L,L,1,1,3,0
+2014,Netherlands vs. Argentina,Argentina,2,R,L,1,1,4,0
+2014,Netherlands vs. Argentina,Netherlands,4,R,L,1,0,5,0
+2014,Netherlands vs. Argentina,Argentina,7,R,L,1,1,6,0
+2014,Netherlands vs. Argentina,Netherlands,9,R,L,1,1,7,0
+2014,Netherlands vs. Argentina,Argentina,4,R,L,1,1,8,1
+2018,Spain vs. Russia,Spain,6,R,C,1,1,1,0
+2018,Spain vs. Russia,Russia,4,R,L,1,1,2,0
+2018,Spain vs. Russia,Spain,7,R,R,1,1,3,0
+2018,Spain vs. Russia,Russia,6,R,L,1,1,4,0
+2018,Spain vs. Russia,Spain,7,R,L,1,0,5,0
+2018,Spain vs. Russia,Russia,7,R,L,1,1,6,0
+2018,Spain vs. Russia,Spain,4,R,R,1,1,7,0
+2018,Spain vs. Russia,Russia,8,L,L,1,1,8,0
+2018,Spain vs. Russia,Spain,8,L,L,1,0,9,1
+2018,Denmark vs. Croatia,Denmark,7,R,L,1,0,1,0
+2018,Denmark vs. Croatia,Croatia,7,R,L,1,0,2,0
+2018,Denmark vs. Croatia,Denmark,3,R,C,1,1,3,0
+2018,Denmark vs. Croatia,Croatia,7,R,C,1,1,4,0
+2018,Denmark vs. Croatia,Denmark,7,R,R,1,1,5,0
+2018,Denmark vs. Croatia,Croatia,8,R,R,1,1,6,0
+2018,Denmark vs. Croatia,Denmark,4,R,L,1,0,7,0
+2018,Denmark vs. Croatia,Croatia,7,L,L,1,0,8,0
+2018,Denmark vs. Croatia,Denmark,8,R,R,1,0,9,0
+2018,Denmark vs. Croatia,Croatia,7,R,C,1,1,10,1
+2018,Colombia vs. England,Colombia,5,R,L,1,1,1,0
+2018,Colombia vs. England,England,7,R,L,1,1,2,0
+2018,Colombia vs. England,Colombia,1,R,L,1,1,3,0
+2018,Colombia vs. England,England,7,R,L,1,1,4,0
+2018,Colombia vs. England,Colombia,9,R,L,1,1,5,0
+2018,Colombia vs. England,England,9,R,R,1,0,6,0
+2018,Colombia vs. England,Colombia,3,R,R,0,0,7,0
+2018,Colombia vs. England,England,1,R,L,1,1,8,0
+2018,Colombia vs. England,Colombia,4,R,L,1,0,9,0
+2018,Colombia vs. England,England,7,R,L,1,1,10,1
+2018,Russia vs. Croatia,Russia,5,R,C,1,0,1,0
+2018,Russia vs. Croatia,Croatia,6,R,R,1,1,2,0
+2018,Russia vs. Croatia,Russia,9,R,C,1,1,3,0
+2018,Russia vs. Croatia,Croatia,9,R,R,1,0,4,0
+2018,Russia vs. Croatia,Russia,7,R,C,0,0,5,0
+2018,Russia vs. Croatia,Croatia,7,R,L,1,1,6,0
+2018,Russia vs. Croatia,Russia,7,R,R,1,1,7,0
+2018,Russia vs. Croatia,Croatia,4,R,R,1,1,8,0
+2018,Russia vs. Croatia,Russia,7,R,R,1,1,9,1
+2018,Russia vs. Croatia,Croatia,7,R,R,1,1,10,1

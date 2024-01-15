@@ -1,0 +1,41 @@
+## Author
+
+- **Name:** Vedaant Agarwal
+- **Email:** vedaant2@illinois.edu
+
+## Purpose
+
+The purpose of this Shiny app is to visualize the penalty shootouts that happened
+in the Fifa World Cup from 1982-2018. The Shiny app would allow you to choose a 
+specific year/match combination and produce a visualization of roughly what location
+of the goal the penalty was shot. The visualization also highlights the goals that 
+were scored, goals that were missed/saved, as well as the winning/losing penalty 
+kick a team took. Gridlines are drawn in the visualization which break up the goal 
+into 9 distinct regions.
+
+## Data
+
+The data was sourced from Kaggle (first link in References). The data consists of
+penalty kick locations and outcomes from the Fifa World Cup from 1982-2018. The 
+locations are not explicitly given, but are rather divided into 9 zones, from numbers
+1-9. The numbers mean
+
+1. Upper left corner
+2. Upper center
+3. Upper right corner
+4. Middle left area
+5. Middle center area
+6. Middle right area
+7. Bottom left corner
+8. Bottom center zone
+9. Bottom right corner
+
+The data consists of the order the penalty was taken in, as well as whether each penalty
+was saved, not on target (missed), or scored. Some processing had to be done, such 
+as creating a match name based on the countries playing it rather than a game id.
+
+## References
+
+- [World Cup Penalty Shootouts](https://www.kaggle.com/datasets/pablollanderos33/world-cup-penalty-shootouts?select=WorldCupShootouts.csv)
+- [Adding Backgrounds to ggplot2](https://buzzrbeeline.blog/2018/06/13/fun-and-easy-r-graphs-with-images/)
+- [Making Composite ggplot2 images](https://patchwork.data-imaginist.com)
